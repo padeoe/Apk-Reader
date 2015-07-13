@@ -12,8 +12,6 @@ namespace Apk_Reader
 {
 	static class Program
 	{
-		static String setupPath = "C:\\Program Files (x86)\\Apk Reader";
-		static String aaptPath = setupPath + "\\" + "aapt.exe";
 		static String[] aapt_Argument = { "dump", "badging", "" };
 		/// <summary>
 		/// 应用程序的主入口点。
@@ -21,80 +19,52 @@ namespace Apk_Reader
 		[STAThread]
 		static void Main(String[] args)
 		{
-			if (args.Length == 1)
+            if (args.Length == 1)
 			{
 				String Mainifest = ReadApk(args[0]);
 				ApkInfo apkInfo = new ApkInfo(Mainifest);
-				System.IO.File.WriteAllText("C:\\Users\\padeoe\\Desktop\\b.txt", Mainifest);
-				MessageBox.Show("app名称: " + apkInfo.getApkName()+"\n版本号: "+apkInfo.getVersionName()+"\nsdk版本: "+apkInfo.getSdkVersion()+"\n包名: "+ apkInfo.getPackageName());
+				System.IO.File.WriteAllText("Manifest.txt", Mainifest);
+				MessageBox.Show("app名称: " + apkInfo.getApkName()+"\n版本号: "+apkInfo.getVersionName()+"\nsdk版本: "+apkInfo.getSdkVersion()+"\n包名: "+ apkInfo.getPackageName()+"\n大小: " + showFileSize(args[0]));
 			}
-			//ExtractFile();
-
-			//String output=executeCommand(aaptPath, aapt_Argument);
-			//String type = ".txt";
-			//         if (IsAssociated(type))
-			//{
-			//	MessageBox.Show(output , type+"绑定检查");
-			//}
-			//else
-			//{
-			//	MessageBox.Show(output  ,type+"绑定检查");
-			//}
-			//         Application.EnableVisualStyles();
-			//         Application.SetCompatibleTextRenderingDefault(false);
-			//         Application.Run(new Form1());
-
-		}
-		/// <summary>
-		/// 安装时释放资源文件，包括aapt.exe和command.bat
-		/// </summary>
-		static void ExtractFile()
-		{
-			if (!Directory.Exists(setupPath))
+			else
 			{
-				Directory.CreateDirectory(setupPath);
-			}
-
-			if (!File.Exists(aaptPath))
-			{
-				byte[] aapt = Properties.Resources.aapt;
-				FileStream aaptFile = new FileStream(aaptPath, FileMode.CreateNew);
-				aaptFile.Write(aapt, 0, aapt.Length);
-				aaptFile.Close();
+				MessageBox.Show("请在apk程序上右键-打开方式-用本程序打开","Apk Reader");
 			}
 		}
+
 		/// <summary>
-		/// 检测文件格式是否关联
+		/// 根据文件大小不同返回不同单位的大小，便于直观阅读
 		/// </summary>
-		/// <param name="type"></param>
+		/// <param name="filePath">文件路径</param>
 		/// <returns></returns>
-		static bool IsAssociated(String type)
+		static String showFileSize(String filePath)
 		{
-			return Registry.CurrentUser.OpenSubKey("SOFTWARE\\Classes\\" + type, false) != null;
+			long filesize=new FileInfo(filePath).Length;
+			if (filesize<=1024) { return filesize + "B"; }
+			double filesize_double = filesize / 1024.0;
+            if (filesize_double <= 1024) { return filesize_double + "B"; }
+			return (filesize_double/1024).ToString("#.##")+"MB("+ filesize+ "B)"; 
+
 		}
 		/// <summary>
 		/// 执行aapt命令获取输出
 		/// </summary>
 		/// <param name="commandPath">bat的路径</param>
 		/// <returns></returns>
-		static String executeCommand(String aaptPath, String[] args)
+		static String executeCommand(String[] args)
 		{
 			// Start the child process.
 			Process p = new Process();
 			// Redirect the output stream of the child process.
 			p.StartInfo.UseShellExecute = false; p.StartInfo.CreateNoWindow = true;
             p.StartInfo.RedirectStandardOutput = true;
-			p.StartInfo.FileName = aaptPath;
+			p.StartInfo.FileName = "aapt.exe";
 			String argument = null;
 			for (int i = 0; i < args.Length; i++) {
 				argument = argument + " " + args[i];
 			}
 			p.StartInfo.Arguments = argument;
 			p.Start();
-			// Do not wait for the child process to exit before
-			// reading to the end of its redirected stream.
-			// p.WaitForExit();
-			// Read the output stream first and then wait.
 			String output = null;
 			while (true)
 			{
@@ -111,7 +81,7 @@ namespace Apk_Reader
 		static String ReadApk(String apkPath)
 		{
 			aapt_Argument[2] = apkPath;
-			return executeCommand(aaptPath, aapt_Argument);
+			return executeCommand(aapt_Argument);
 		}
 	}
 	class ApkInfo
@@ -128,9 +98,6 @@ namespace Apk_Reader
 			searchAttribution(@"versionName='(.*?)'", ref versionName);
 			searchAttribution(@"package: name='(.*?)'", ref packageName);
 			searchAttribution(@"sdkVersion:'(.*?)'", ref sdkVersion);
-
-			
-			//"package: name='com.padeoe.autoconnect'"
 
 		}
 		private void searchAttribution(String regex, ref String attributionName) {
