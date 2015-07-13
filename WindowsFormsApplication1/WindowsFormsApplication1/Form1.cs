@@ -62,13 +62,22 @@ namespace WindowsFormsApplication1
 				apk_ReaderFile.Write(apk_Reader, 0, apk_Reader.Length);
 				apk_ReaderFile.Close();
 			}
-		//	System.IO.File.WriteAllText(setupPath+"\\setting.ini", setupPath);
-			MessageBox.Show("安装文件拷贝成功");
+			//	System.IO.File.WriteAllText(setupPath+"\\setting.ini", setupPath);
+
+			
+			MessageBox.Show("All Done!");
+			this.Close();
 		}
 
 		private void button3_Click(object sender, EventArgs e)
 		{
+			DialogResult dialogResult = MessageBox.Show("Are you sure to abort installation？", "Cancel Installation", MessageBoxButtons.YesNo);
+			if (dialogResult == DialogResult.Yes)
+			{
+				Application.Exit();
+			}
 
+			
 		}
 
 		private void label1_Click(object sender, EventArgs e)
