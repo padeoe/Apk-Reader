@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.Win32;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
@@ -19,12 +15,19 @@ namespace Apk_Reader
 		[STAThread]
 		static void Main(String[] args)
 		{
-            if (args.Length == 1)
+
+			/*
+			///for debug
+			String [] a=new String[1];
+			a[0] = "C:\\Users\\padeoe\\Desktop\\a.apk";
+            args = a;
+			*/
+			if (args.Length == 1)
 			{
 				String Mainifest = ReadApk(args[0]);
 				ApkInfo apkInfo = new ApkInfo(Mainifest);
 				System.IO.File.WriteAllText("Manifest.txt", Mainifest);
-				MessageBox.Show("app名称: " + apkInfo.getApkName()+"\n版本号: "+apkInfo.getVersionName()+"\nsdk版本: "+apkInfo.getSdkVersion()+"\n包名: "+ apkInfo.getPackageName()+"\n大小: " + showFileSize(args[0]));
+				MessageBox.Show("app名称: " + apkInfo.apkName+"\n版本号: "+apkInfo.versionName+"\nsdk版本: "+apkInfo.sdkVersion+"\n包名: "+ apkInfo.packageName+"\n大小: " + showFileSize(args[0]));
 			}
 			else
 			{
@@ -61,7 +64,7 @@ namespace Apk_Reader
 			p.StartInfo.FileName = "aapt.exe";
 			String argument = null;
 			for (int i = 0; i < args.Length; i++) {
-				argument = argument + " " + args[i];
+				argument += " " + args[i];
 			}
 			p.StartInfo.Arguments = argument;
 			p.Start();
@@ -84,50 +87,40 @@ namespace Apk_Reader
 			return executeCommand(aapt_Argument);
 		}
 	}
-	class ApkInfo
+	/// <summary>
+	/// 存储Apk信息
+	/// </summary>
+	public class ApkInfo
 	{
-		String allManifest;
-		String apkName;
-		String versionName;
-		String packageName;
-		String sdkVersion;
+		public String allManifest { get; }
+		public String apkName { get; }
+		public String versionName { get; }
+		public String packageName { get; }
+		public String sdkVersion { get; }
+
+		/// <summary>
+		/// 根据Mainifest.xml文件读取ApkInfo类属性所需的apk信息
+		/// </summary>
+		/// <param name="Mainifest">Mainifest.xml文件的内容</param>
 		public ApkInfo(String Mainifest)
 		{
 			allManifest = Mainifest;
-			searchAttribution(@"application-label:'(.*?)'", ref apkName);
-			searchAttribution(@"versionName='(.*?)'", ref versionName);
-			searchAttribution(@"package: name='(.*?)'", ref packageName);
-			searchAttribution(@"sdkVersion:'(.*?)'", ref sdkVersion);
-
+			apkName = getAttribution(@"application-label:'(.*?)'");
+			versionName = getAttribution(@"versionName='(.*?)'");
+			packageName = getAttribution(@"package: name='(.*?)'");
+			sdkVersion = getAttribution(@"sdkVersion:'(.*?)'");
 		}
-		private void searchAttribution(String regex, ref String attributionName) {
+
+		private String getAttribution(String regex)
+		{
 			Regex reg = new Regex(regex);
 			Match m = reg.Match(allManifest);
 			if (m.Success)
 			{
-				attributionName = m.Groups[1].Value;
+				return m.Groups[1].Value;
 			}
+			return "";
 		}
 
-		public String getAllManifest()
-		{
-			return allManifest;
-		}
-		public String getVersionName()
-		{
-			return versionName;
-		}
-		public String getApkName()
-		{
-			return apkName;
-		}
-		public String getPackageName()
-		{
-			return packageName;
-		}
-		public String getSdkVersion()
-		{
-			return sdkVersion;
-		}
 	}
 }
