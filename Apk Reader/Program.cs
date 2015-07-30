@@ -19,7 +19,7 @@ namespace Apk_Reader
 			/*
 			///for debug
 			String [] a=new String[1];
-			a[0] = "C:\\Users\\padeoe\\Desktop\\a.apk";
+			a[0] = "C:\\Users\\padeo\\Desktop\\a.apk";
             args = a;
 			*/
 			if (args.Length == 1)
@@ -45,7 +45,7 @@ namespace Apk_Reader
 			long filesize=new FileInfo(filePath).Length;
 			if (filesize<=1024) { return filesize + "B"; }
 			double filesize_double = filesize / 1024.0;
-            if (filesize_double <= 1024) { return filesize_double + "B"; }
+            if (filesize_double <= 1024) { return filesize_double + "KB"; }
 			return (filesize_double/1024).ToString("#.##")+"MB("+ filesize+ "B)"; 
 
 		}
@@ -77,7 +77,6 @@ namespace Apk_Reader
 				output += tmp;
 			}
 			//p.WaitForExit();
-			System.IO.File.WriteAllText("C:\\Users\\padeoe\\Desktop\\a.txt", output);
 			return output;
 		}
 
