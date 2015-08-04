@@ -19,12 +19,12 @@ namespace Apk_Reader
 			/*
 			///for debug
 			String [] a=new String[1];
-			a[0] = "C:\\Users\\padeo\\Desktop\\a.apk";
+		    a[0] = "C:\\Users\\padeoe\\Desktop\\aaa a\\base.apk";
             args = a;
 			*/
 			if (args.Length == 1)
 			{
-				String Mainifest = ReadApk(args[0]);
+				String Mainifest = ReadApk("\"" + args[0] + "\"");
 				ApkInfo apkInfo = new ApkInfo(Mainifest);
 				System.IO.File.WriteAllText("Manifest.txt", Mainifest);
 				MessageBox.Show("app名称: " + apkInfo.apkName+"\n版本号: "+apkInfo.versionName+"\nsdk版本: "+apkInfo.sdkVersion+"\n包名: "+ apkInfo.packageName+"\n大小: " + showFileSize(args[0]));
@@ -44,9 +44,9 @@ namespace Apk_Reader
 		{
 			long filesize=new FileInfo(filePath).Length;
 			if (filesize<=1024) { return filesize + "B"; }
-			double filesize_double = filesize / 1024.0;
-            if (filesize_double <= 1024) { return filesize_double + "KB"; }
-			return (filesize_double/1024).ToString("#.##")+"MB("+ filesize+ "B)"; 
+			double filesize_KB = filesize / 1024.0;
+            if (filesize_KB <= 1024) { return filesize_KB.ToString("#.##") + "KB"; }
+			return (filesize_KB / 1024).ToString("#.##")+"MB("+ filesize+ "B)"; 
 
 		}
 		/// <summary>
