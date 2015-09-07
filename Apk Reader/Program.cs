@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
+
 namespace Apk_Reader
 {
 	static class Program
@@ -19,7 +20,7 @@ namespace Apk_Reader
 			/*
 			///for debug
 			String [] a=new String[1];
-		    a[0] = "C:\\Users\\padeoe\\Desktop\\aaa a\\base.apk";
+		    a[0] = "C:\\Users\\padeoe\\Desktop\\aaa.apk";
             args = a;
 			*/
 			if (args.Length == 1)
@@ -27,7 +28,12 @@ namespace Apk_Reader
 				String Mainifest = ReadApk("\"" + args[0] + "\"");
 				ApkInfo apkInfo = new ApkInfo(Mainifest);
 				System.IO.File.WriteAllText("Manifest.txt", Mainifest);
-				MessageBox.Show("app名称: " + apkInfo.apkName+"\n版本号: "+apkInfo.versionName+"\nsdk版本: "+apkInfo.sdkVersion+"\n包名: "+ apkInfo.packageName+"\n大小: " + showFileSize(args[0]));
+				MessageBox.Show("名称: " + apkInfo.apkName
+				+"\n版本: "+apkInfo.versionName
+				+"\nmin sdk: "+ apkInfo.sdkVersion
+				+ "\ntarget sdk: "+apkInfo.targetSdkVersion
+				+"\n包名: " + apkInfo.packageName
+				+"\n大小: " + showFileSize(args[0]));
 			}
 			else
 			{
@@ -46,7 +52,7 @@ namespace Apk_Reader
 			if (filesize<=1024) { return filesize + "B"; }
 			double filesize_KB = filesize / 1024.0;
             if (filesize_KB <= 1024) { return filesize_KB.ToString("#.##") + "KB"; }
-			return (filesize_KB / 1024).ToString("#.##")+"MB("+ filesize+ "B)"; 
+			return (filesize_KB / 1024).ToString("#.##")+"MB("+ filesize_KB.ToString("#") + "KB)"; 
 
 		}
 		/// <summary>
@@ -96,6 +102,7 @@ namespace Apk_Reader
 		public String versionName { get; }
 		public String packageName { get; }
 		public String sdkVersion { get; }
+		public String targetSdkVersion { get; }
 
 		/// <summary>
 		/// 根据Mainifest.xml文件读取ApkInfo类属性所需的apk信息
@@ -108,6 +115,7 @@ namespace Apk_Reader
 			versionName = getAttribution(@"versionName='(.*?)'");
 			packageName = getAttribution(@"package: name='(.*?)'");
 			sdkVersion = getAttribution(@"sdkVersion:'(.*?)'");
+			targetSdkVersion = getAttribution(@"targetSdkVersion:'(.*?)'");
 		}
 
 		private String getAttribution(String regex)
