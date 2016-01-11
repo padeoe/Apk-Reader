@@ -9,6 +9,10 @@ namespace Apk_Reader
 {
 	static class Program
 	{
+	public static ApkInfo apkInfo;
+		public static string NokiaN1DeviceCode= "L15220FNN1K2";
+		public static string Nexus6DeviceCode = "ZX1G42B46X";
+		public static string staticArgs0;
 		static String[] aapt_Argument = { "dump", "badging", "" };
 		/// <summary>
 		/// 应用程序的主入口点。
@@ -17,23 +21,19 @@ namespace Apk_Reader
 		static void Main(String[] args)
 		{
 
-			/*
+
 			///for debug
-			String [] a=new String[1];
-		    a[0] = "C:\\Users\\padeoe\\Desktop\\aaa.apk";
-            args = a;
-			*/
+			String[] a = new String[1];
+			a[0] = @"C:\Users\padeoe\Desktop\aaa.apk";
+			args = a;
+
+
 			if (args.Length == 1)
 			{
-				String Mainifest = ReadApk("\"" + args[0] + "\"");
-				ApkInfo apkInfo = new ApkInfo(Mainifest);
-				System.IO.File.WriteAllText("Manifest.txt", Mainifest);
-				MessageBox.Show("名称: " + apkInfo.apkName
-				+"\n版本: "+apkInfo.versionName
-				+"\nmin sdk: "+ apkInfo.sdkVersion
-				+ "\ntarget sdk: "+apkInfo.targetSdkVersion
-				+"\n包名: " + apkInfo.packageName
-				+"\n大小: " + showFileSize(args[0]));
+				staticArgs0 = args[0];
+				Application.EnableVisualStyles();
+				Application.SetCompatibleTextRenderingDefault(false);
+				Application.Run(new Form1());
 			}
 			else
 			{
@@ -46,7 +46,7 @@ namespace Apk_Reader
 		/// </summary>
 		/// <param name="filePath">文件路径</param>
 		/// <returns></returns>
-		static String showFileSize(String filePath)
+		public static String showFileSize(String filePath)
 		{
 			long filesize=new FileInfo(filePath).Length;
 			if (filesize<=1024) { return filesize + "B"; }
@@ -60,36 +60,33 @@ namespace Apk_Reader
 		/// </summary>
 		/// <param name="commandPath">bat的路径</param>
 		/// <returns></returns>
-		static String executeCommand(String[] args)
+		public static String executeCommand(String fileName,String[] args)
 		{
-			// Start the child process.
-			Process p = new Process();
-			// Redirect the output stream of the child process.
-			p.StartInfo.UseShellExecute = false; p.StartInfo.CreateNoWindow = true;
-            p.StartInfo.RedirectStandardOutput = true;
-			p.StartInfo.FileName = "aapt.exe";
+			Process myProcess = new Process();
+			ProcessStartInfo myProcessStartInfo = new ProcessStartInfo(fileName);
 			String argument = null;
-			for (int i = 0; i < args.Length; i++) {
+			for (int i = 0; i < args.Length; i++)
+			{
 				argument += " " + args[i];
 			}
-			p.StartInfo.Arguments = argument;
-			p.Start();
-			String output = null;
-			while (true)
-			{
-				String tmp = p.StandardOutput.ReadToEnd();
-				if (tmp == "")
-					break;
-				output += tmp;
-			}
-			//p.WaitForExit();
-			return output;
+			myProcessStartInfo.Arguments = argument;
+			myProcessStartInfo.UseShellExecute = false;
+			myProcessStartInfo.CreateNoWindow = true;
+			myProcessStartInfo.RedirectStandardOutput = true;
+			myProcessStartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8; // this is the most important part, to get correct myString, see below
+			myProcess.StartInfo = myProcessStartInfo;
+			myProcess.Start();
+			StreamReader myStreamReader = myProcess.StandardOutput;
+			string myString = myStreamReader.ReadToEnd();
+			myProcess.WaitForExit();
+			myProcess.Close();
+			return myString;
 		}
 
-		static String ReadApk(String apkPath)
+		public static String ReadApk(String apkPath)
 		{
 			aapt_Argument[2] = apkPath;
-			return executeCommand(aapt_Argument);
+			return executeCommand("aapt.exe",aapt_Argument);
 		}
 	}
 	/// <summary>
@@ -103,6 +100,7 @@ namespace Apk_Reader
 		public String packageName { get; }
 		public String sdkVersion { get; }
 		public String targetSdkVersion { get; }
+		public String versionCode { get; }
 
 		/// <summary>
 		/// 根据Mainifest.xml文件读取ApkInfo类属性所需的apk信息
@@ -116,6 +114,7 @@ namespace Apk_Reader
 			packageName = getAttribution(@"package: name='(.*?)'");
 			sdkVersion = getAttribution(@"sdkVersion:'(.*?)'");
 			targetSdkVersion = getAttribution(@"targetSdkVersion:'(.*?)'");
+			versionCode= getAttribution(@"versionCode='(.*?)'");
 		}
 
 		private String getAttribution(String regex)
