@@ -23,9 +23,9 @@ namespace Apk_Reader
 
 
 			///for debug
-			String[] a = new String[1];
-			a[0] = @"C:\Users\padeoe\Desktop\aaa.apk";
-			args = a;
+			//String[] a = new String[1];
+			//a[0] = @"C:\Users\padeoe\Desktop\bbb.apk";
+			//args = a;
 
 
 			if (args.Length == 1)
