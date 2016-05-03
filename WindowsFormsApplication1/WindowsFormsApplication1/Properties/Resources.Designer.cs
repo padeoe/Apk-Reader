@@ -73,6 +73,26 @@ namespace WindowsFormsApplication1.Properties {
         /// <summary>
         ///   查找 System.Byte[] 类型的本地化资源。
         /// </summary>
+        internal static byte[] adb {
+            get {
+                object obj = ResourceManager.GetObject("adb", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Byte[] 类型的本地化资源。
+        /// </summary>
+        internal static byte[] AdbWinApi {
+            get {
+                object obj = ResourceManager.GetObject("AdbWinApi", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Byte[] 类型的本地化资源。
+        /// </summary>
         internal static byte[] Apk_Reader {
             get {
                 object obj = ResourceManager.GetObject("Apk_Reader", resourceCulture);

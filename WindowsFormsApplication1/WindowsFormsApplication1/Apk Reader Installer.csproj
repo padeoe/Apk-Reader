@@ -107,6 +107,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="newIcon.ico" />
+    <None Include="Resources\AdbWinApi.dll" />
+    <None Include="Resources\adb.exe" />
     <None Include="Resources\Apk Reader.exe" />
   </ItemGroup>
   <ItemGroup>

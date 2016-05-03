@@ -47,26 +47,27 @@ namespace WindowsFormsApplication1
 			{
 				Directory.Delete(setupPath,true);
 			}
-			Directory.CreateDirectory(this.pathTextBox.Text);
-			if (!File.Exists(setupPath+"\\aapt.exe"))
-			{
-				byte[] aapt = Properties.Resources.aapt;
-				FileStream aaptFile = new FileStream(setupPath + "\\aapt.exe", FileMode.CreateNew);
-				aaptFile.Write(aapt, 0, aapt.Length);
-				aaptFile.Close();
-			}
-			if (!File.Exists(setupPath + "\\Apk Reader.exe"))
-			{
-				byte[] apk_Reader = Properties.Resources.Apk_Reader;
-				FileStream apk_ReaderFile = new FileStream(setupPath + "\\Apk Reader.exe", FileMode.CreateNew);
-				apk_ReaderFile.Write(apk_Reader, 0, apk_Reader.Length);
-				apk_ReaderFile.Close();
-			}
+			Directory.CreateDirectory(setupPath);
+			prepareFile(Properties.Resources.Apk_Reader, setupPath, "Apk Reader.exe");
+			prepareFile(Properties.Resources.aapt, setupPath, "aapt.exe");
+			prepareFile(Properties.Resources.adb, setupPath, "adb.exe");
+			prepareFile(Properties.Resources.AdbWinApi, setupPath, "AdbWinApi.dll");
 			//	System.IO.File.WriteAllText(setupPath+"\\setting.ini", setupPath);
 
-			
 			MessageBox.Show("All Done!");
 			this.Close();
+		}
+
+		private void prepareFile(byte[] resources, String installPath, String fileName) {
+			if (!File.Exists(installPath+"\\"+fileName))
+			{
+				extractFile(resources, installPath, fileName);
+			}
+		}
+		private void extractFile(byte[] resources,String installPath,String fileName) {
+			FileStream fileStream = new FileStream(installPath+"\\"+fileName, FileMode.CreateNew);
+			fileStream.Write(resources, 0, resources.Length);
+			fileStream.Close();
 		}
 
 		private void button3_Click(object sender, EventArgs e)

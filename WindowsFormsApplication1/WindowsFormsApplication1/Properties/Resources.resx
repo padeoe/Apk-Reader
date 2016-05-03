@@ -124,4 +124,10 @@
   <data name="Apk_Reader" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Apk Reader.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="adb" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\adb.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="AdbWinApi" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AdbWinApi.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>
